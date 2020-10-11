@@ -17,7 +17,8 @@ class LeagueInfoViewModel @Inject constructor(
 
     fun getLeagueById() {
         viewModelScope.launch {
-            league.value = getLeagueByIdUseCase.fetchingData()
+            getLeagueByIdUseCase.fetchingData("info", "1005")
+            league.value  = getLeagueByIdUseCase.league
         }
     }
 }
