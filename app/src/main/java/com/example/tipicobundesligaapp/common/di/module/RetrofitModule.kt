@@ -2,7 +2,6 @@ package com.example.tipicobundesligaapp.common.di.module
 
 import com.example.tipicobundesligaapp.common.data.remote.ApiService
 import com.example.tipicobundesligaapp.common.di.scope.DataScope
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 
@@ -10,7 +9,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
 class RetrofitModule {
@@ -26,8 +25,7 @@ class RetrofitModule {
     fun getRetrofit(okHttpClient: OkHttpClient?): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://api.soccersapi.com/v2.2/")
-            .addConverterFactory(MoshiConverterFactory.create())
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
+            .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
     }
