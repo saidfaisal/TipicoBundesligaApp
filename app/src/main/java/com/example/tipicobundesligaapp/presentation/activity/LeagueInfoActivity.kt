@@ -14,15 +14,14 @@ class LeagueInfoActivity : AppCompatActivity() {
     
     @Inject
     lateinit var leagueInfoViewModel: LeagueInfoViewModel
-    private var observeForFirstTime = true
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_league_info)
         initDagger()
 
         cardView.setOnClickListener {
-            leagueInfoViewModel.getLeagueById()
+            leagueInfoViewModel.getLeagueStandings()
         }
         fetchingData()
         oberverLiveData()
@@ -33,20 +32,30 @@ class LeagueInfoActivity : AppCompatActivity() {
     }
 
     private fun fetchingData() {
-        leagueInfoViewModel.getLeagueById()
+        leagueInfoViewModel.getLeague()
+        leagueInfoViewModel.getLeagueStandings()
     }
 
     private fun oberverLiveData() {
+        oberveGetLeague()
+        observeGetLeagueStandings()
+    }
+
+    private fun oberveGetLeague() {
         leagueInfoViewModel.league.observe(this, Observer { leagueModel ->
-            if (observeForFirstTime) {
-                fetchingData()
-                observeForFirstTime = false
-            }
             leagueModel?.let {
                 tvNameLeague.text = it.name
                 tvSession.text = it.seasons.first().name
                 tvContinentCountry.text = "${it.continent.name} - ${it.country.name}"
                 Glide.with(this).load(it.img).centerCrop().into(ivLeague)
+            }
+        })
+    }
+
+    private fun observeGetLeagueStandings() {
+        leagueInfoViewModel.leagueStandings.observe(this, Observer { leagueStandingsModel ->
+            leagueStandingsModel?.let {
+                println(leagueStandingsModel.standings)
             }
         })
     }
