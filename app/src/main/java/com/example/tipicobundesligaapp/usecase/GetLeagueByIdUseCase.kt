@@ -1,6 +1,6 @@
 package com.example.tipicobundesligaapp.usecase
 
-import com.example.tipicobundesligaapp.common.data.remote.RetrofitBuilder
+import com.example.tipicobundesligaapp.common.data.remote.ApiService
 import com.example.tipicobundesligaapp.common.data.remote.model.getleaguebyid.LeagueModel
 import com.example.tipicobundesligaapp.common.data.remote.model.getleaguebyid.ResponseModel
 import kotlinx.coroutines.Dispatchers
@@ -10,13 +10,15 @@ import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
-class GetLeagueByIdUseCase @Inject constructor() {
 
-    private var league: LeagueModel? = null
+class GetLeagueByIdUseCase @Inject constructor(private var apiService: ApiService) {
 
-    suspend fun fetchingData(): LeagueModel? {
+    var league: LeagueModel? = null
+
+    suspend fun fetchingData(t: String, id: String){
         withContext(Dispatchers.IO) {
-            RetrofitBuilder.retrofitService.getLeagueById(t = "info", id = "1005").enqueue(object : Callback<ResponseModel> {
+            val callback = apiService.getLeagueById(t = t, id = id)
+            callback.enqueue(object : Callback<ResponseModel> {
                 override fun onFailure(call: Call<ResponseModel>, t: Throwable) {
                     println(t.message)
                 }
@@ -25,10 +27,11 @@ class GetLeagueByIdUseCase @Inject constructor() {
                     call: Call<ResponseModel>,
                     response: Response<ResponseModel>
                 ) {
-                    league = response.body()?.data
+                    if (response.isSuccessful) {
+                        league = response.body()?.data
+                    }
                 }
             })
         }
-        return league
     }
 }
